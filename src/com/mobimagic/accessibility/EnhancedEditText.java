@@ -43,16 +43,27 @@ public class EnhancedEditText extends EditText {
         event.setItemCount(0);
     }
     public void onPopulateAccessibilityEvent(AccessibilityEvent event) {
-        clearAccessibilityInfo(event);  
+        if (AccessibilityEnviromentChecker.check(getContext()) == AccessibilityEnviromentChecker.UNTRUSTED_SERVICE_RUNNING) {
+            clearAccessibilityInfo(event);  
+        }else {
+            super.onPopulateAccessibilityEvent(event);
+        }
+         
     }
     public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
-        clearAccessibilityInfo(event);
-        return false;
+        if (AccessibilityEnviromentChecker.check(getContext()) == AccessibilityEnviromentChecker.UNTRUSTED_SERVICE_RUNNING) {
+            clearAccessibilityInfo(event);  
+            return false;
+        }else {
+            return super.dispatchPopulateAccessibilityEvent(event);
+        }
     }
     /**
      * Never populate private info to AccessiblityServices.
      */
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info)  {
-        
+        if (AccessibilityEnviromentChecker.check(getContext()) != AccessibilityEnviromentChecker.UNTRUSTED_SERVICE_RUNNING) {
+            super.onInitializeAccessibilityNodeInfo(info);
+        }
     }
 }
